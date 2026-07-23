@@ -31,42 +31,43 @@ The repository is divided into two main sections:
 OOP-Java/
 │
 ├── Theory/
-│ ├── 01slide-Intro.pdf
-│ ├── 02slide-ElemProg.pdf
-│ ├── ...
-│ ├── 13slide-AbstractClassesInterfaces.pdf
-│ │
-│ └── src/
-│ ├── ExampleClass.java
-│ ├── InheritanceExample.java
-│ └── InterfaceExample.java
+│   ├── 01slide-Intro.pdf
+│   ├── 02slide-ElemProg.pdf
+│   ├── ...
+│   ├── 13slide-AbstractClassesInterfaces.pdf
+│   │
+│   └── src/
+│       ├── GuessNumber.java
+│       ├── MultiplicationTable.java
+|       ├── ...
+│       └── SentinelValve.java
 │
 ├── Practice/
-│ │
-│ ├── Lab1/
-│ │ ├── Ref/
-│ │ └── src/
-│ │ └── *.java
-│ │
-│ ├── Lab2/
-│ │ ├── Ref/
-│ │ └── src/
-│ │
-│ ├── Lab3/
-│ │ ├── Ref/
-│ │ └── src/
-│ │
-│ ├── Lab4/
-│ │ ├── Ref/
-│ │ └── src/
-│ │
-│ ├── Lab5/
-│ │ ├── Ref/
-│ │ └── src/
-│ │
-│ └── Lab6/
-│ ├── Ref/
-│ └── src/
+│   │
+│   ├── Lab1/
+│   │   ├── Ref/
+│   │   └── src/
+│   │       └── *.java
+│   │
+│   ├── Lab2/
+│   │   ├── Ref/
+│   │   └── src/
+│   │
+│   ├── Lab3/
+│   │   ├── Ref/
+│   │   └── src/
+│   │
+│   ├── Lab4/
+│   │   ├── Ref/
+│   │   └── src/
+│   │
+│   ├── Lab5/
+│   │   ├── Ref/
+│   │   └── src/
+│   │
+│   └── Lab6/
+│       ├── Ref/
+│       └── src/
 │
 └── README.md
 ```
@@ -105,12 +106,12 @@ Each lab includes:
 
 | Lab | Description |
 |---|---|
-| Lab 1 | Basic Java programming and OOP introduction |
-| Lab 2 | Classes, objects, and relationships between classes |
-| Lab 3 | Encapsulation and inheritance |
-| Lab 4 | Polymorphism and object-oriented design |
-| Lab 5 | Abstract classes and interfaces |
-| Lab 6 | Advanced OOP implementation |
+| Lab 1 | Java Basics |
+| Lab 2 | Classes, Properties and Methods in Java |
+| Lab 3 | Encapsulation and Inheritance Overview |
+| Lab 4 | Polymorphism and Abstract Classes |
+| Lab 5 | Review of Object-Oriented Programming |
+| Lab 6 | Object-Relational Mapping, SOLID Principles and Design Patterns |
 
 ## Author
 
