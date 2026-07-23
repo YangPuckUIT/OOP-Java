@@ -32,7 +32,7 @@ OOP-Java/
 │
 ├── Theory/
 │ ├── 01slide-Intro.pdf
-│ ├── 02slide-ClassesObjects.pdf
+│ ├── 02slide-ElemProg.pdf
 │ ├── ...
 │ ├── 13slide-AbstractClassesInterfaces.pdf
 │ │
