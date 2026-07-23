@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 5 - Ex1: Blood Type Inheritance and Compatibility</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700;800&display=swap');
+        :root {
+            --bg: #0f1117;
+            --surface: #181a20;
+            --surface-2: #1e2028;
+            --border: #2a2d38;
+            --text: #e4e4e7;
+            --text-muted: #9ca0ad;
+            --accent: #6c8cff;
+            --accent-dim: #3a4d8c;
+            --green: #4ade80;
+            --green-dim: #1a3a2a;
+            --orange: #fb923c;
+            --orange-dim: #3a2a1a;
+            --red: #f87171;
+            --red-dim: #3a1a1a;
+            --purple: #c084fc;
+            --purple-dim: #2a1a3a;
+            --cyan: #22d3ee;
+            --yellow: #fbbf24;
+            --code-bg: #13141a;
+            --code-border: #23252f;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+        }
+        .hero {
+            background: linear-gradient(135deg, #1a1c2e 0%, #0f1117 50%, #1a1520 100%);
+            border-bottom: 1px solid var(--border);
+            padding: 60px 40px;
+            text-align: center;
+        }
+        .hero h1 {
+            font-size: 2.4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent), var(--purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
+        }
+        .hero .subtitle { color: var(--text-muted); font-size: 1.05rem; max-width: 640px; margin: 0 auto; }
+        .hero .badge {
+            display: inline-block; margin-top: 20px; padding: 6px 16px; border-radius: 20px;
+            font-size: 0.8rem; font-weight: 600; background: var(--accent-dim); color: var(--accent);
+            border: 1px solid rgba(108,140,255,0.3);
+        }
+        .container { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+        .section-title {
+            font-size: 1.5rem; font-weight: 800; margin-bottom: 24px; padding-bottom: 12px;
+            border-bottom: 2px solid var(--border); display: flex; align-items: center; gap: 12px;
+        }
+        .section-title .icon {
+            width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center;
+            justify-content: center; font-size: 1.1rem; flex-shrink: 0;
+        }
+        .problem-box {
+            background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+            padding: 28px; margin-bottom: 32px;
+        }
+        .problem-box h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 12px; color: var(--accent); }
+        .problem-box p, .problem-box li { color: var(--text-muted); font-size: 0.92rem; }
+        .problem-box ul { list-style: none; padding-left: 0; }
+        .problem-box ul li::before { content: "\2192 "; color: var(--accent); font-weight: 600; }
+        .problem-box ul li { margin-bottom: 4px; }
+        table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.88rem; }
+        th {
+            background: var(--surface-2); color: var(--accent); font-weight: 600; text-align: left;
+            padding: 10px 14px; border-bottom: 2px solid var(--border);
+        }
+        td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: var(--text-muted); }
+        tr:last-child td { border-bottom: none; }
+        .valid { color: var(--green); font-weight: 600; }
+        .invalid { color: var(--red); font-weight: 600; }
+        .step-card {
+            background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+            margin-bottom: 32px; overflow: hidden;
+        }
+        .step-header {
+            display: flex; align-items: center; gap: 16px; padding: 20px 28px;
+            border-bottom: 1px solid var(--border); background: var(--surface-2);
+        }
+        .step-number {
+            width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center;
+            justify-content: center; font-weight: 800; font-size: 1rem; flex-shrink: 0;
+        }
+        .step-number.blue { background: var(--accent-dim); color: var(--accent); }
+        .step-number.green { background: var(--green-dim); color: var(--green); }
+        .step-number.orange { background: var(--orange-dim); color: var(--orange); }
+        .step-number.purple { background: var(--purple-dim); color: var(--purple); }
+        .step-number.red { background: var(--red-dim); color: var(--red); }
+        .step-header .step-info h3 { font-size: 1.1rem; font-weight: 700; }
+        .step-header .step-info p { font-size: 0.82rem; color: var(--text-muted); margin-top: 2px; }
+        .step-body { padding: 24px 28px; }
+        .analysis, .explanation, .reason {
+            margin-bottom: 20px; padding: 18px 20px; border-radius: 10px; border-left: 3px solid;
+        }
+        .analysis { background: rgba(108,140,255,0.06); border-color: var(--accent); }
+        .analysis .label { color: var(--accent); }
+        .explanation { background: rgba(74,222,128,0.06); border-color: var(--green); }
+        .explanation .label { color: var(--green); }
+        .reason { background: rgba(251,191,36,0.06); border-color: var(--yellow); }
+        .reason .label { color: var(--yellow); }
+        .label {
+            font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.08em; margin-bottom: 8px;
+        }
+        .analysis p, .explanation p, .reason p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.75; }
+        .code-block {
+            background: var(--code-bg); border: 1px solid var(--code-border);
+            border-radius: 10px; overflow-x: auto; margin: 16px 0;
+        }
+        .code-block .code-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 18px; border-bottom: 1px solid var(--code-border);
+            background: rgba(255,255,255,0.02);
+        }
+        .code-block .code-header span { font-size: 0.78rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; }
+        .code-block .file-badge {
+            font-size: 0.7rem; padding: 2px 10px; border-radius: 6px;
+            background: var(--accent-dim); color: var(--accent); font-weight: 600;
+        }
+        .code-block pre { padding: 18px; margin: 0; overflow-x: auto; }
+        .code-block code { font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; line-height: 1.7; color: var(--text); }
+        .kw { color: #c084fc; }
+        .tp { color: #6c8cff; }
+        .str { color: #4ade80; }
+        .cm { color: #5a5e6e; font-style: italic; }
+        .fn { color: #fbbf24; }
+        .num { color: #fb923c; }
+        .an { color: #22d3ee; }
+        .inherit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0; }
+        .inherit-item {
+            background: var(--surface-2); padding: 12px 16px; border-radius: 8px;
+            border: 1px solid var(--border); font-size: 0.88rem;
+        }
+        .inherit-item .parents { color: var(--accent); font-weight: 600; }
+        .inherit-item .children { color: var(--text-muted); margin-top: 4px; }
+        .compat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin: 16px 0; }
+        .compat-card { background: var(--surface-2); padding: 14px; border-radius: 8px; border: 1px solid var(--border); }
+        .compat-card .type { font-weight: 700; color: var(--purple); font-size: 1rem; margin-bottom: 6px; }
+        .compat-card .donors { font-size: 0.82rem; color: var(--text-muted); }
+
+        /* Sơ đồ cấu trúc class (UML dạng hộp) */
+        .class-diagram {
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            font-size: 0.78rem;
+            margin-top: 8px;
+        }
+        .cd-tier {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 6px;
+        }
+        .cd-tier--row {
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            max-width: 100%;
+        }
+        .cd-arrow {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.72rem;
+            letter-spacing: 0.02em;
+            margin: 4px 0 8px;
+            line-height: 1.5;
+        }
+        .cd-box {
+            background: var(--code-bg);
+            border: 1px solid var(--code-border);
+            border-radius: 10px;
+            padding: 14px 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        .cd-box--enum {
+            border-color: rgba(192, 132, 252, 0.4);
+            min-width: 180px;
+            text-align: center;
+        }
+        .cd-box--parent {
+            border-color: rgba(108, 140, 255, 0.45);
+            min-width: 240px;
+            max-width: 100%;
+            width: min(100%, 320px);
+        }
+        .cd-box--child {
+            min-width: 108px;
+            max-width: 140px;
+            flex: 1 1 108px;
+            text-align: center;
+            padding: 12px 10px;
+        }
+        .cd-box--child .cd-title { font-size: 0.85rem; margin-bottom: 0; }
+        .cd-box--person {
+            border-color: rgba(74, 222, 128, 0.4);
+            min-width: 260px;
+            max-width: 100%;
+            width: min(100%, 360px);
+        }
+        .cd-stereo {
+            font-size: 0.7rem;
+            color: var(--purple);
+            margin-bottom: 2px;
+            letter-spacing: 0.06em;
+        }
+        .cd-title {
+            font-weight: 700;
+            color: var(--text);
+            font-size: 0.95rem;
+            margin-bottom: 6px;
+        }
+        .cd-sep {
+            border: none;
+            border-top: 1px solid var(--code-border);
+            margin: 8px 0 10px;
+        }
+        .cd-members {
+            color: var(--text-muted);
+            font-size: 0.74rem;
+            line-height: 1.7;
+        }
+        .cd-members code {
+            color: var(--accent);
+            font-size: inherit;
+            background: rgba(108, 140, 255, 0.08);
+            padding: 0 4px;
+            border-radius: 4px;
+        }
+        .cd-vis-prot { color: var(--purple); font-weight: 600; }
+        .cd-vis-pub { color: var(--green); font-weight: 600; }
+        .cd-vis-priv { color: var(--orange); font-weight: 600; }
+
+        /* Phần 5 — Quy trình OOP tổng quát */
+        .oop-flow { margin-top: 8px; }
+        .oop-step {
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 18px 20px;
+            margin-bottom: 14px;
+            border-left: 3px solid var(--accent);
+        }
+        .oop-step:last-child { margin-bottom: 0; }
+        .oop-step-head {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        .oop-step-num {
+            flex-shrink: 0;
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            background: var(--accent-dim);
+            color: var(--accent);
+            font-weight: 800;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Inter', sans-serif;
+        }
+        .oop-step-title {
+            font-size: 1.02rem;
+            font-weight: 700;
+            color: var(--text);
+            margin: 0;
+            line-height: 1.35;
+            padding-top: 4px;
+        }
+        .problem-box h3.oop-step-title {
+            color: var(--text);
+            font-size: 1.02rem;
+            margin-bottom: 0;
+        }
+        .oop-step-body { font-size: 0.9rem; color: var(--text-muted); line-height: 1.7; }
+        .oop-step-body > p { margin: 0 0 10px; }
+        .oop-step-body > p:last-child { margin-bottom: 0; }
+        .oop-subhead {
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            color: var(--cyan);
+            margin: 14px 0 8px;
+        }
+        .oop-subhead:first-child { margin-top: 0; }
+        .oop-ul { margin: 0; padding-left: 1.2rem; }
+        .oop-ul li { margin-bottom: 6px; }
+        .oop-ul li:last-child { margin-bottom: 0; }
+        .oop-qa {
+            display: grid;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .oop-qa-item {
+            background: rgba(108, 140, 255, 0.07);
+            border: 1px solid rgba(108, 140, 255, 0.2);
+            border-radius: 10px;
+            padding: 12px 14px;
+            font-size: 0.88rem;
+            line-height: 1.55;
+        }
+        .oop-qa-item strong { color: var(--accent); font-weight: 600; }
+        .oop-rule {
+            background: rgba(251, 191, 36, 0.08);
+            border: 1px solid rgba(251, 191, 36, 0.2);
+            border-left: 3px solid var(--yellow);
+            border-radius: 0 10px 10px 0;
+            padding: 12px 16px;
+            margin: 12px 0;
+            font-size: 0.9rem;
+        }
+        .oop-rule strong { color: var(--yellow); }
+        .oop-pill-list { margin: 8px 0 0; padding-left: 1.15rem; font-size: 0.88rem; }
+        .oop-rel-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .oop-rel-card {
+            background: var(--code-bg);
+            border: 1px solid var(--code-border);
+            border-radius: 10px;
+            padding: 14px;
+            font-size: 0.84rem;
+            line-height: 1.55;
+        }
+        .oop-rel-card .rel-name {
+            font-weight: 700;
+            color: var(--purple);
+            font-size: 0.8rem;
+            margin-bottom: 6px;
+            letter-spacing: 0.02em;
+        }
+        .oop-main-hint {
+            background: rgba(34, 211, 238, 0.06);
+            border: 1px solid rgba(34, 211, 238, 0.18);
+            border-radius: 10px;
+            padding: 12px 14px;
+            margin-top: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        .oop-order {
+            background: rgba(108, 140, 255, 0.06);
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin-top: 10px;
+            font-size: 0.88rem;
+            line-height: 1.65;
+            border: 1px solid rgba(108, 140, 255, 0.12);
+        }
+        .oop-verify {
+            margin-top: 20px;
+            padding: 18px 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(74, 222, 128, 0.28);
+            background: rgba(74, 222, 128, 0.07);
+        }
+        .oop-verify h4 {
+            margin: 0 0 10px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--green);
+        }
+        .oop-verify p { margin: 0 0 10px; font-size: 0.88rem; color: var(--text-muted); line-height: 1.7; }
+        .oop-verify p:last-child { margin-bottom: 0; }
+
+        .note {
+            background: rgba(34,211,238,0.06); border: 1px solid rgba(34,211,238,0.15);
+            border-radius: 10px; padding: 16px 20px; margin: 16px 0; font-size: 0.88rem; color: var(--text-muted);
+        }
+        .note strong { color: var(--cyan); }
+        @media (max-width: 640px) {
+            .hero { padding: 40px 20px; }
+            .hero h1 { font-size: 1.6rem; }
+            .step-header { padding: 16px 18px; }
+            .step-body { padding: 18px; }
+            .inherit-grid { grid-template-columns: 1fr; }
+            .problem-box { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="hero">
+    <h1>Lab 5 - Ex1: Blood Type Inheritance &amp; Compatibility</h1>
+    <p class="subtitle">Hướng dẫn từng bước xây dựng chương trình OOP mô phỏng di truyền nhóm máu và kiểm tra khả năng truyền máu trong Java.</p>
+    <span class="badge">Object-Oriented Programming - Java</span>
+</div>
+
+<div class="container">
+
+<!-- ĐỀ BÀI -->
+<h2 class="section-title">
+    <span class="icon" style="background:var(--accent-dim);color:var(--accent);">&#128203;</span>
+    Phần 1 – Mô tả đề bài
+</h2>
+
+<div class="problem-box">
+    <h3>Mục tiêu chương trình</h3>
+    <p>Xây dựng chương trình Java sử dụng lập trình hướng đối tượng (OOP) để:</p>
+    <ul>
+        <li>Kiểm tra nhóm máu con có hợp lệ dựa trên nhóm máu cha mẹ.</li>
+        <li>Kiểm tra khả năng truyền máu giữa các đối tượng trong danh sách.</li>
+        <li>Quản lý danh sách người kèm nhóm máu (A+/-, B+/-, AB+/-, O+/-).</li>
+    </ul>
+</div>
+
+<div class="problem-box">
+    <h3>Chức năng 1 – Kiểm tra nhóm máu con</h3>
+    <p>Nhập nhóm máu của cha, mẹ và con. Chương trình xác định nhóm máu con có hợp lệ theo quy luật di truyền ABO + Rh hay không.</p>
+    <table>
+        <thead><tr><th>Cha</th><th>Mẹ</th><th>Con</th><th>Kết quả</th></tr></thead>
+        <tbody>
+            <tr><td>A+</td><td>O+</td><td>O+</td><td class="valid">Hợp lệ &#10003;</td></tr>
+            <tr><td>AB+</td><td>O+</td><td>AB+</td><td class="invalid">Không hợp lệ &#10007;</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="problem-box">
+    <h3>Chức năng 2 – Kiểm tra truyền máu</h3>
+    <p>Nhập danh sách người (tên + nhóm máu), chọn một người nhận &rarr; tìm tất cả người có thể truyền máu cho họ.</p>
+    <table>
+        <thead><tr><th>Người</th><th>Nhóm máu</th></tr></thead>
+        <tbody>
+            <tr><td>An</td><td>A+</td></tr>
+            <tr><td>Binh</td><td>O-</td></tr>
+            <tr><td>Cuong</td><td>AB+</td></tr>
+        </tbody>
+    </table>
+    <p style="margin-top:12px;">Nếu chọn <strong>An (A+)</strong>, những người có nhóm máu <strong>A+, A-, O+, O-</strong> đều có thể truyền cho An.</p>
+</div>
+
+<!-- KIẾN THỨC NỀN -->
+<h2 class="section-title" style="margin-top:48px;">
+    <span class="icon" style="background:var(--green-dim);color:var(--green);">&#129516;</span>
+    Phần 2 – Kiến thức nền tảng
+</h2>
+
+<div class="problem-box">
+    <h3>Quy luật di truyền nhóm máu ABO</h3>
+    <div class="inherit-grid">
+        <div class="inherit-item"><div class="parents">A + A</div><div class="children">&rarr; Con có thể: A, O</div></div>
+        <div class="inherit-item"><div class="parents">A + B</div><div class="children">&rarr; Con có thể: A, B, AB, O</div></div>
+        <div class="inherit-item"><div class="parents">A + AB</div><div class="children">&rarr; Con có thể: A, B, AB</div></div>
+        <div class="inherit-item"><div class="parents">A + O</div><div class="children">&rarr; Con có thể: A, O</div></div>
+        <div class="inherit-item"><div class="parents">B + B</div><div class="children">&rarr; Con có thể: B, O</div></div>
+        <div class="inherit-item"><div class="parents">B + AB</div><div class="children">&rarr; Con có thể: A, B, AB</div></div>
+        <div class="inherit-item"><div class="parents">B + O</div><div class="children">&rarr; Con có thể: B, O</div></div>
+        <div class="inherit-item"><div class="parents">AB + AB</div><div class="children">&rarr; Con có thể: A, B, AB</div></div>
+        <div class="inherit-item"><div class="parents">AB + O</div><div class="children">&rarr; Con có thể: A, B</div></div>
+        <div class="inherit-item"><div class="parents">O + O</div><div class="children">&rarr; Con có thể: O</div></div>
+    </div>
+</div>
+
+<div class="problem-box">
+    <h3>Quy luật Rh</h3>
+    <p>Nếu <strong>cả cha và mẹ đều Rh-</strong> &rarr; con <strong>bắt buộc phải Rh-</strong>.<br>
+    Các trường hợp khác &rarr; con có thể Rh+ hoặc Rh-.</p>
+</div>
+
+<div class="problem-box">
+    <h3>Quy tắc truyền máu</h3>
+    <div class="compat-grid">
+        <div class="compat-card"><div class="type">Người nhận A</div><div class="donors">Nhận từ: A, O</div></div>
+        <div class="compat-card"><div class="type">Người nhận B</div><div class="donors">Nhận từ: B, O</div></div>
+        <div class="compat-card"><div class="type">Người nhận AB</div><div class="donors">Nhận từ: A, B, AB, O</div></div>
+        <div class="compat-card"><div class="type">Người nhận O</div><div class="donors">Nhận từ: O</div></div>
+    </div>
+    <p><strong>Quy tắc Rh khi truyền máu:</strong> Người Rh+ nhận được từ cả Rh+ và Rh-. Người Rh- chỉ nhận được từ Rh-.</p>
+</div>
+
+<!-- SƠ ĐỒ CLASS (đặt trước Phần 3) -->
+<h2 class="section-title" style="margin-top:48px;">
+    <span class="icon" style="background:var(--surface-2);color:var(--cyan);border:1px solid var(--border);">&#128736;</span>
+    Sơ đồ cấu trúc class (UML)
+</h2>
+
+<div class="problem-box">
+    <h3>Phân cấp lớp và quan hệ</h3>
+    <p style="font-size:0.9rem;color:var(--text-muted);margin-bottom:18px;line-height:1.65;">
+        <strong>RhFactor</strong> (enum) được lớp cha <strong>BloodType</strong> dùng qua thuộc tính Rh;
+        <strong>AType</strong>, <strong>BType</strong>, <strong>ABType</strong>, <strong>OType</strong> kế thừa <strong>BloodType</strong> và ghi đè quy tắc di truyền / truyền máu;
+        <strong>Person</strong> <em>has-a</em> <strong>BloodType</strong> (thành phần — composition).
+    </p>
+    <div class="class-diagram" aria-label="Sơ đồ UML lớp nhóm máu">
+        <div class="cd-tier">
+            <div class="cd-box cd-box--enum">
+                <div class="cd-stereo">&laquo;enum&raquo;</div>
+                <div class="cd-title">RhFactor</div>
+                <hr class="cd-sep">
+                <div class="cd-members">POSITIVE<br>NEGATIVE</div>
+            </div>
+        </div>
+        <div class="cd-arrow">&darr; <strong>BloodType</strong> tham chiếu &mdash; <span class="cd-vis-prot">#</span>rh: <code>RhFactor</code></div>
+        <div class="cd-tier">
+            <div class="cd-box cd-box--parent">
+                <div class="cd-title">BloodType</div>
+                <hr class="cd-sep">
+                <div class="cd-members">
+                    <span class="cd-vis-prot">#</span> rh: <code>RhFactor</code><br>
+                    <span class="cd-vis-pub">+</span> getRh()<br>
+                    <span class="cd-vis-pub">+</span> getType()<br>
+                    <span class="cd-vis-pub">+</span> possibleChildren(other)<br>
+                    <span class="cd-vis-pub">+</span> canReceiveFrom(donor)<br>
+                    <span class="cd-vis-pub">+</span> toString() &nbsp;·&nbsp; equals(o)
+                </div>
+            </div>
+        </div>
+        <div class="cd-arrow">&uarr; <strong>extends</strong> &mdash; bốn lớp nhóm máu ABO</div>
+        <div class="cd-tier cd-tier--row">
+            <div class="cd-box cd-box--child"><div class="cd-title">AType</div></div>
+            <div class="cd-box cd-box--child"><div class="cd-title">BType</div></div>
+            <div class="cd-box cd-box--child"><div class="cd-title">ABType</div></div>
+            <div class="cd-box cd-box--child"><div class="cd-title">OType</div></div>
+        </div>
+        <div class="cd-arrow" style="margin-top:14px;">&darr; <strong>composition</strong> &mdash; Person giữ một tham chiếu tới <code>BloodType</code></div>
+        <div class="cd-tier">
+            <div class="cd-box cd-box--person">
+                <div class="cd-title">Person</div>
+                <hr class="cd-sep">
+                <div class="cd-members">
+                    <span class="cd-vis-priv">&minus;</span> name: <code>String</code><br>
+                    <span class="cd-vis-priv">&minus;</span> bloodType: <code>BloodType</code><br>
+                    <span class="cd-vis-pub">+</span> getName() &nbsp;·&nbsp; getBloodType()<br>
+                    <span class="cd-vis-pub">+</span> toString()
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CÁC BƯỚC -->
+<h2 class="section-title" style="margin-top:48px;">
+    <span class="icon" style="background:var(--purple-dim);color:var(--purple);">&#128295;</span>
+    Phần 3 – Hướng dẫn thực hiện Step-by-Step
+</h2>
+
+<!-- STEP 1 -->
+<div class="step-card">
+    <div class="step-header">
+        <div class="step-number blue">1</div>
+        <div class="step-info">
+            <h3>Tạo enum RhFactor</h3>
+            <p>Định nghĩa yếu tố Rh (Rhesus)</p>
+        </div>
+    </div>
+    <div class="step-body">
+        <div class="analysis">
+            <div class="label">&#128269; Phân tích đề</div>
+            <p>Đề bài yêu cầu mỗi nhóm máu gồm 2 phần: <strong>kiểu ABO</strong> (A, B, AB, O) và <strong>yếu tố Rh</strong> (+/-). Yếu tố Rh chỉ có đúng 2 giá trị cố định: POSITIVE và NEGATIVE. Đây là tình huống lý tưởng để dùng <code>enum</code>.</p>
+        </div>
+        <div class="code-block">
+            <div class="code-header"><span>RhFactor.java</span><span class="file-badge">enum</span></div>
+            <pre><code><span class="kw">enum</span> <span class="tp">RhFactor</span> {
+    <span class="str">POSITIVE</span>, <span class="str">NEGATIVE</span>
+}</code></pre>
+        </div>
+        <div class="explanation">
+            <div class="label">&#128161; Giải thích code</div>
+            <p><code>enum</code> trong Java tạo ra một kiểu dữ liệu với tập giá trị hữu hạn, cố định. Ở đây <code>RhFactor</code> chỉ có thể là <code>POSITIVE</code> (tương ứng dấu +) hoặc <code>NEGATIVE</code> (tương ứng dấu -). Không thể tạo giá trị nào khác ngoài hai giá trị này.</p>
+        </div>
+        <div class="reason">
+            <div class="label">&#10067; Lý do thiết kế</div>
+            <p>Dùng <code>enum</code> thay vì <code>String</code> hay <code>boolean</code> vì: (1) <strong>An toàn kiểu</strong> – trình biên dịch sẽ bắt lỗi nếu truyền sai giá trị; (2) <strong>Code rõ ràng</strong> – <code>RhFactor.POSITIVE</code> dễ đọc hơn <code>true</code> hay <code>"+"</code>; (3) <strong>Tránh lỗi chính tả</strong> – không thể viết sai thành <code>"POSTIIVE"</code> như khi dùng String.</p>
+        </div>
+    </div>
+</div>
+
+<!-- STEP 2 -->
+<div class="step-card">
+    <div class="step-header">
+        <div class="step-number green">2</div>
+        <div class="step-info">
+            <h3>Tạo lớp cơ sở BloodType</h3>
+            <p>Lớp cha (base class) cho tất cả các nhóm máu</p>
+        </div>
+    </div>
+    <div class="step-body">
+        <div class="analysis">
+            <div class="label">&#128269; Phân tích đề</div>
+            <p>Có 4 nhóm máu ABO (A, B, AB, O) – mỗi nhóm có hành vi riêng về di truyền và truyền máu, nhưng đều chia sẻ thuộc tính Rh và các phương thức chung (<code>toString</code>, <code>equals</code>). Đây là bài toán kế thừa điển hình: tạo một lớp cha <code>BloodType</code> chứa phần chung, các lớp con sẽ override phần riêng.</p>
+        </div>
+        <div class="code-block">
+            <div class="code-header"><span>BloodType.java</span><span class="file-badge">class</span></div>
+            <pre><code><span class="kw">public class</span> <span class="tp">BloodType</span> {
+    <span class="kw">protected</span> <span class="tp">RhFactor</span> rh;
+
+    <span class="kw">public</span> <span class="fn">BloodType</span>(<span class="tp">RhFactor</span> rh) {
+        <span class="kw">this</span>.rh = rh;
+    }
+
+    <span class="kw">public</span> <span class="tp">RhFactor</span> <span class="fn">getRh</span>() {
+        <span class="kw">return</span> rh;
+    }
+
+    <span class="cm">// Lớp con sẽ override để trả về "A", "B", "AB", "O"</span>
+    <span class="kw">public</span> <span class="tp">String</span> <span class="fn">getType</span>() {
+        <span class="kw">return</span> <span class="str">"Unknown"</span>;
+    }
+
+    <span class="cm">// Lớp con override: trả về tập nhóm máu con có thể có</span>
+    <span class="kw">public</span> <span class="tp">Set&lt;String&gt;</span> <span class="fn">possibleChildren</span>(<span class="tp">BloodType</span> otherParent) {
+        <span class="kw">return new</span> <span class="tp">HashSet&lt;&gt;</span>();
+    }
+
+    <span class="cm">// Lớp con override: kiểm tra truyền máu</span>
+    <span class="kw">public boolean</span> <span class="fn">canReceiveFrom</span>(<span class="tp">BloodType</span> donor) {
+        <span class="kw">return false</span>;
+    }
+
+    <span class="kw">public</span> <span class="tp">String</span> <span class="fn">toString</span>() {
+        <span class="kw">return</span> <span class="fn">getType</span>() + (rh == <span class="tp">RhFactor</span>.<span class="str">POSITIVE</span> ? <span class="str">"+"</span> : <span class="str">"-"</span>);
+    }
+
+    <span class="kw">public boolean</span> <span class="fn">equals</span>(<span class="tp">Object</span> o) {
+        <span class="kw">if</span> (o <span class="kw">instanceof</span> <span class="tp">BloodType</span>) {
+            <span class="tp">BloodType</span> bt = (<span class="tp">BloodType</span>) o;
+            <span class="kw">return this</span>.<span class="fn">toString</span>().<span class="fn">equals</span>(bt.<span class="fn">toString</span>());
+        }
+        <span class="kw">return false</span>;
+    }
+}</code></pre>
+        </div>
+        <div class="explanation">
+            <div class="label">&#128161; Giải thích code</div>
+            <p><strong><code>protected RhFactor rh</code></strong> – thuộc tính Rh được đánh dấu <code>protected</code> để các lớp con (AType, BType…) có thể truy cập trực tiếp.<br><br>
+            <strong><code>getType()</code></strong> – trả về "Unknown" mặc định; mỗi lớp con sẽ override trả về kiểu cụ thể ("A", "B"…).<br><br>
+            <strong><code>possibleChildren()</code></strong> – trả về <code>HashSet</code> rỗng mặc định; lớp con override để cài đặt bảng di truyền.<br><br>
+            <strong><code>canReceiveFrom()</code></strong> – trả về <code>false</code> mặc định; lớp con override để cài đặt quy tắc truyền máu.<br><br>
+            <strong><code>toString()</code></strong> – gọi <code>getType()</code> + thêm dấu "+" hoặc "-" dựa trên Rh. Nhờ tính đa hình, khi gọi trên đối tượng AType, nó sẽ trả về "A+" hoặc "A-".<br><br>
+            <strong><code>equals()</code></strong> – so sánh hai đối tượng BloodType bằng cách so sánh chuỗi <code>toString()</code>.</p>
+        </div>
+        <div class="reason">
+            <div class="label">&#10067; Lý do thiết kế</div>
+            <p>Lớp <code>BloodType</code> đóng vai trò <strong>abstraction layer</strong>: phần còn lại của chương trình (Person, BloodTypeProgram) chỉ cần làm việc với kiểu <code>BloodType</code> mà không cần biết cụ thể đó là A, B, AB hay O. Đây là nguyên lý <strong>Dependency Inversion</strong> – phụ thuộc vào abstraction, không phụ thuộc vào implementation. Các phương thức trả về giá trị mặc định (thay vì abstract) để code linh hoạt hơn – lớp con chỉ cần override những gì cần thay đổi.</p>
+        </div>
+        <div class="note">
+            <strong>&#128221; Lưu ý:</strong> Trong lab, lớp này không được khai báo <code>abstract</code> (dù tiêu đề ghi "Abstract Class"). Các phương thức có implementation mặc định thay vì dùng từ khóa <code>abstract</code>. Cách làm này vẫn đạt được hiệu quả tương tự – lớp con bắt buộc phải override để có hành vi đúng.
+        </div>
+    </div>
+</div>
+
+<!-- STEP 3 -->
+<div class="step-card">
+    <div class="step-header">
+        <div class="step-number orange">3</div>
+        <div class="step-info">
+            <h3>Tạo lớp con AType</h3>
+            <p>Cài đặt quy luật di truyền và truyền máu cho nhóm A</p>
+        </div>
+    </div>
+    <div class="step-body">
+        <div class="analysis">
+            <div class="label">&#128269; Phân tích đề</div>
+            <p>Nhóm máu A cần cài đặt 2 thứ: (1) <strong>Di truyền</strong> – bảng kết hợp A với các nhóm khác cho ra những nhóm máu nào ở con; (2) <strong>Truyền máu</strong> – A chỉ nhận từ A và O, kèm quy tắc Rh.</p>
+        </div>
+        <div class="code-block">
+            <div class="code-header"><span>AType.java</span><span class="file-badge">extends BloodType</span></div>
+            <pre><code><span class="kw">class</span> <span class="tp">AType</span> <span class="kw">extends</span> <span class="tp">BloodType</span> {
+    <span class="kw">public</span> <span class="fn">AType</span>(<span class="tp">RhFactor</span> rh) {
+        <span class="kw">super</span>(rh);
+    }
+
+    <span class="an">@Override</span>
+    <span class="kw">public</span> <span class="tp">String</span> <span class="fn">getType</span>() {
+        <span class="kw">return</span> <span class="str">"A"</span>;
+    }
+
+    <span class="an">@Override</span>
+    <span class="kw">public</span> <span class="tp">Set&lt;String&gt;</span> <span class="fn">possibleChildren</span>(<span class="tp">BloodType</span> other) {
+        <span class="tp">Set&lt;String&gt;</span> result = <span class="kw">new</span> <span class="tp">HashSet&lt;&gt;</span>();
+        <span class="tp">String</span> otherType = other.<span class="fn">getType</span>();
+        <span class="kw">switch</span> (otherType) {
+            <span class="kw">case</span> <span class="str">"A"</span>:
+                result.<span class="fn">addAll</span>(<span class="tp">List</span>.<span class="fn">of</span>(<span class="str">"A"</span>, <span class="str">"O"</span>));
+                <span class="kw">break</span>;
+            <span class="kw">case</span> <span class="str">"B"</span>:
+                result.<span class="fn">addAll</span>(<span class="tp">List</span>.<span class="fn">of</span>(<span class="str">"A"</span>, <span class="str">"B"</span>, <span class="str">"AB"</span>, <span class="str">"O"</span>));
+                <span class="kw">break</span>;
+            <span class="kw">case</span> <span class="str">"AB"</span>:
+                result.<span class="fn">addAll</span>(<span class="tp">List</span>.<span class="fn">of</span>(<span class="str">"A"</span>, <span class="str">"B"</span>, <span class="str">"AB"</span>));
+                <span class="kw">break</span>;
+            <span class="kw">case</span> <span class="str">"O"</span>:
+                result.<span class="fn">addAll</span>(<span class="tp">List</span>.<span class="fn">of</span>(<span class="str">"A"</span>, <span class="str">"O"</span>));
+                <span class="kw">break</span>;
+        }
+        <span class="kw">return</span> result;
+    }
+
+    <span class="an">@Override</span>
+    <span class="kw">public boolean</span> <span class="fn">canReceiveFrom</span>(<span class="tp">BloodType</span> donor) {
+        <span class="kw">return</span> donor.<span class="fn">getType</span>().<span class="fn">equals</span>(<span class="str">"A"</span>) || donor.<span class="fn">getType</span>().<span class="fn">equals</span>(<span class="str">"O"</span>) &amp;&amp;
+               (donor.<span class="fn">getRh</span>() == <span class="tp">RhFactor</span>.<span class="str">NEGATIVE</span> || <span class="kw">this</span>.rh == <span class="tp">RhFactor</span>.<span class="str">POSITIVE</span>);
+    }
+}</code></pre>
+        </div>
+        <div class="explanation">
+            <div class="label">&#128161; Giải thích code</div>
+            <p><strong>Constructor <code>AType(RhFactor rh)</code></strong> – gọi <code>super(rh)</code> để truyền giá trị Rh lên lớp cha BloodType khởi tạo.<br><br>
+            <strong><code>getType()</code></strong> – override trả về <code>"A"</code>, xác định đây là nhóm máu A.<br><br>
+            <strong><code>possibleChildren()</code></strong> – dùng <code>switch</code> trên kiểu nhóm máu của cha/mẹ còn lại để tra bảng di truyền. Ví dụ: A + B &rarr; có thể sinh ra A, B, AB, O. Dùng <code>HashSet</code> để tự loại bỏ giá trị trùng lặp.<br><br>
+            <strong><code>canReceiveFrom()</code></strong> – logic 2 phần: (1) Kiểu ABO: chỉ nhận từ A hoặc O; (2) Kiểu Rh: nếu donor là Rh- thì luôn OK, hoặc nếu bản thân (this) là Rh+ thì cũng nhận được Rh+.</p>
+        </div>
+        <div class="reason">
+            <div class="label">&#10067; Lý do thiết kế</div>
+            <p>Mỗi lớp con chỉ chịu trách nhiệm <strong>quy luật riêng của nhóm máu đó</strong> – đây là nguyên lý <strong>Single Responsibility</strong>. Khi cần thay đổi quy luật nhóm A, chỉ sửa file AType.java mà không ảnh hưởng đến các nhóm khác. Việc dùng <code>switch-case</code> giúp code dễ đọc – mỗi case tương ứng trực tiếp với một dòng trong bảng di truyền.</p>
+        </div>
+    </div>
+</div>
+
+<!-- STEP 4 -->
+<div class="step-card">
+    <div class="step-header">
+        <div class="step-number purple">4</div>
+        <div class="step-info">
+            <h3>Tạo lớp con BType, ABType, OType</h3>
+            <p>Áp dụng cùng pattern cho các nhóm máu còn lại</p>
+        </div>
+    </div>
+    <div class="step-body">
+        <div class="analysis">
+            <div class="label">&#128269; Phân tích đề</div>
+            <p>Cấu trúc giống hệt AType, chỉ khác ở nội dung bảng di truyền và quy tắc nhận máu. Đây là sức mạnh của OOP: một <strong>template chung</strong> (BloodType), mỗi lớp con chỉ cần điền dữ liệu riêng.</p>
+        </div>
+        <div class="code-block">
+            <div class="code-header"><span>BType.java</span><span class="file-badge">extends BloodType</span></div>
+            <pre><code><span class="kw">class</span> <span class="tp">BType</span> <span class="kw">extends</span> <span class="tp">BloodType</span> {
+    <span class="kw">public</span> <span class="fn">BType</span>(<span class="tp">RhFactor</span> rh) { <span class="kw">super</span>(rh); }
+
+    <span class="an">@Override</span>
+    <span class="kw">public</span> <span class="tp">String</span> <span class="fn">getType</span>() { <span class="kw">return</span> <span class="str">"B"</span>; }
+
+    <span class="an">@Override</span>
+    <span class="kw">public</span> <span class="tp">Set&lt;String&gt;</span> <span class="fn">possibleChildren</span>(<span class="tp">BloodType</span> other) {
+        <span class="tp">Set&lt;String&gt;</span> result = <span class="kw">new</span> <span class="tp">HashSet&lt;&gt;</span>();
+        <span class="kw">switch</span> (other.<span class="fn">getType</span>()) {
+            <span class="kw">case</span> <span class="str">"A"</span>:  result.<span class="fn">addAll</span>(<span class="tp">List</span>.<span class="fn">of</span>(<span class="str">"A"</span>,<span class="str">"B"</span>,<span class="str">"AB"</span>,<span class="str">"O"</span>)); <span class="kw">break</span>;
+            <span class="kw">case</span> <span class="str">"B"</span>:  result.<span class="fn">addAll</span>(<span class="tp">List</span>.<span class="fn">of</span>(<span class="str">"B"</span>,<span class="str">"O"</span>)); <span class="kw">break</span>;
+            <span class="kw">case</span> <span class="str">"AB"</span>: result.<span class="fn">addAll</span>(<span class="tp">List</span>.<span class="fn">of</span>(<span class="str">"A"</span>,<span class="str">"B"</span>,<span class="str">"AB"</span>)); <span class="kw">break</span>;
+            <span class="kw">case</span> <span class="str">"O"</span>:  result.<span class="fn">addAll</span>(<span class="tp">List</span>.<span class="fn">of</span>(<span class="str">"B"</span>,<span class="str">"O"</span>)); <span class="kw">break</span>;
+        }
+        <span class="kw">return</span> result;
+    }
+
+    <span class="an">@Override</span>
+    <span class="kw">public boolean</span> <span class="fn">canReceiveFrom</span>(<span class="tp">BloodType</span> donor) {
+        <span class="kw">return</span> donor.<span class="fn">getType</span>().<span class="fn">equals</span>(<span class="str">"B"</span>) || donor.<span class="fn">getType</span>().<span class="fn">equals</span>(<span class="str">"O"</span>) &amp;&amp;
+               (donor.<span class="fn">getRh</span>() == <span class="tp">RhFactor</span>.<span class="str">NEGATIVE</span> || <span class="kw">this</span>.rh == <span class="tp">RhFactor</span>.<span class="str">POSITIVE</span>);
+    }
+}</code></pre>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header"><span>ABType.java</span><span class="file-badge">extends BloodType</span></div>
+            <pre><code><span class="kw">class</span> <span class="tp">ABType</span> <span class="kw">extends</span> <span class="tp">BloodType</span> {
+    <span class="kw">public</span> <span class="fn">ABType</span>(<span class="tp">RhFactor</span> rh) { <span class="kw">super</span>(rh); }
+
+    <span class="an">@Override</span>
+    <span class="kw">public</span> <span class="tp">String</span> <span class="fn">getType</span>() { <span class="kw">return</span> <span class="str">"AB"</span>; }
+
+    <span class="an">@Override</span>
+    <span class="kw">public</span> <span class="tp">Set&lt;String&gt;</span> <span class="fn">possibleChildren</span>(<span class="tp">BloodType</span> other) {
+        <span class="tp">Set&lt;String&gt;</span> result = <span class="kw">new</span> <span class="tp">HashSet&lt;&gt;</span>();
+        <span class="kw">switch</span> (other.<span class="fn">getType</span>()) {
+            <span class="kw">case</span> <span class="str">"A"</span>:  result.<span class="fn">addAll</span>(<span class="tp">List</span>.<span class="fn">of</span>(<span class="str">"A"</span>,<span class="str">"B"</span>,<span class="str">"AB"</span>)); <span class="kw">break</span>;
+            <span class="kw">case</span> <span class="str">"B"</span>:  result.<span class="fn">addAll</span>(<span class="tp">List</span>.<span class="fn">of</span>(<span class="str">"A"</span>,<span class="str">"B"</span>,<span class="str">"AB"</span>)); <span class="kw">break</span>;
+            <span class="kw">case</span> <span class="str">"AB"</span>: result.<span class="fn">addAll</span>(<span class="tp">List</span>.<span class="fn">of</span>(<span class="str">"A"</span>,<span class="str">"B"</span>,<span class="str">"AB"</span>)); <span class="kw">break</span>;
+            <span class="kw">case</span> <span class="str">"O"</span>:  result.<span class="fn">addAll</span>(<span class="tp">List</span>.<span class="fn">of</span>(<span class="str">"A"</span>,<span class="str">"B"</span>)); <span class="kw">break</span>;
+        }
+        <span class="kw">return</span> result;
+    }
+
+    <span class="an">@Override</span>
+    <span class="kw">public boolean</span> <span class="fn">canReceiveFrom</span>(<span class="tp">BloodType</span> donor) {
+        <span class="cm">// AB là universal receiver (nhận từ tất cả kiểu ABO)</span>
+        <span class="kw">return</span> donor.<span class="fn">getRh</span>() == <span class="tp">RhFactor</span>.<span class="str">NEGATIVE</span> || <span class="kw">this</span>.rh == <span class="tp">RhFactor</span>.<span class="str">POSITIVE</span>;
+    }
+}</code></pre>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header"><span>OType.java</span><span class="file-badge">extends BloodType</span></div>
+            <pre><code><span class="kw">class</span> <span class="tp">OType</span> <span class="kw">extends</span> <span class="tp">BloodType</span> {
+    <span class="kw">public</span> <span class="fn">OType</span>(<span class="tp">RhFactor</span> rh) { <span class="kw">super</span>(rh); }
+
+    <span class="an">@Override</span>
+    <span class="kw">public</span> <span class="tp">String</span> <span class="fn">getType</span>() { <span class="kw">return</span> <span class="str">"O"</span>; }
+
+    <span class="an">@Override</span>
+    <span class="kw">public</span> <span class="tp">Set&lt;String&gt;</span> <span class="fn">possibleChildren</span>(<span class="tp">BloodType</span> other) {
+        <span class="tp">Set&lt;String&gt;</span> result = <span class="kw">new</span> <span class="tp">HashSet&lt;&gt;</span>();
+        <span class="kw">switch</span> (other.<span class="fn">getType</span>()) {
+            <span class="kw">case</span> <span class="str">"A"</span>:  result.<span class="fn">addAll</span>(<span class="tp">List</span>.<span class="fn">of</span>(<span class="str">"A"</span>,<span class="str">"O"</span>)); <span class="kw">break</span>;
+            <span class="kw">case</span> <span class="str">"B"</span>:  result.<span class="fn">addAll</span>(<span class="tp">List</span>.<span class="fn">of</span>(<span class="str">"B"</span>,<span class="str">"O"</span>)); <span class="kw">break</span>;
+            <span class="kw">case</span> <span class="str">"AB"</span>: result.<span class="fn">addAll</span>(<span class="tp">List</span>.<span class="fn">of</span>(<span class="str">"A"</span>,<span class="str">"B"</span>)); <span class="kw">break</span>;
+            <span class="kw">case</span> <span class="str">"O"</span>:  result.<span class="fn">addAll</span>(<span class="tp">List</span>.<span class="fn">of</span>(<span class="str">"O"</span>)); <span class="kw">break</span>;
+        }
+        <span class="kw">return</span> result;
+    }
+
+    <span class="an">@Override</span>
+    <span class="kw">public boolean</span> <span class="fn">canReceiveFrom</span>(<span class="tp">BloodType</span> donor) {
+        <span class="cm">// O chỉ nhận từ O</span>
+        <span class="kw">return</span> donor.<span class="fn">getType</span>().<span class="fn">equals</span>(<span class="str">"O"</span>) &amp;&amp;
+               (donor.<span class="fn">getRh</span>() == <span class="tp">RhFactor</span>.<span class="str">NEGATIVE</span> || <span class="kw">this</span>.rh == <span class="tp">RhFactor</span>.<span class="str">POSITIVE</span>);
+    }
+}</code></pre>
+        </div>
+
+        <div class="explanation">
+            <div class="label">&#128161; Giải thích code</div>
+            <p>Cả 3 lớp đều tuân theo cùng một khuôn mẫu (pattern) như AType:<br><br>
+            <strong>BType</strong> &mdash; nhận máu từ B và O. Di truyền: B+B&rarr;B,O; B+A&rarr;A,B,AB,O; B+AB&rarr;A,B,AB; B+O&rarr;B,O.<br><br>
+            <strong>ABType</strong> &mdash; là <em>universal receiver</em> về ABO (nhận từ mọi nhóm), nên <code>canReceiveFrom</code> chỉ cần kiểm tra Rh mà không cần kiểm tra kiểu ABO. Di truyền: AB không bao giờ sinh ra O.<br><br>
+            <strong>OType</strong> &mdash; chỉ nhận từ O (khắt khe nhất). Nhưng O là <em>universal donor</em> &mdash; tất cả nhóm máu đều có thể nhận từ O. Di truyền: O+O chỉ sinh ra O.</p>
+        </div>
+
+        <div class="reason">
+            <div class="label">&#10067; Lý do thiết kế</div>
+            <p>Tách thành 4 lớp con riêng biệt thay vì dùng <code>if-else</code> lồng nhau trong một lớp duy nhất giúp: (1) <strong>Mở rộng dễ</strong> &mdash; nếu cần thêm nhóm máu mới, chỉ tạo thêm lớp mới; (2) <strong>Bảo trì dễ</strong> &mdash; mỗi file chỉ chứa logic của 1 nhóm máu; (3) <strong>Đa hình (Polymorphism)</strong> &mdash; code gọi <code>bloodType.possibleChildren()</code> không cần biết đó là A, B, AB hay O &mdash; Java tự gọi đúng phương thức.</p>
+        </div>
+    </div>
+</div>
+
+<!-- STEP 5 -->
+<div class="step-card">
+    <div class="step-header">
+        <div class="step-number red">5</div>
+        <div class="step-info">
+            <h3>Tạo lớp Person</h3>
+            <p>Đại diện cho một người với tên và nhóm máu</p>
+        </div>
+    </div>
+    <div class="step-body">
+        <div class="analysis">
+            <div class="label">&#128269; Phân tích đề</div>
+            <p>Đề yêu cầu quản lý danh sách người, mỗi người có <strong>tên</strong> và <strong>nhóm máu</strong>. Cần tạo class Person để đóng gói 2 thuộc tính này, hỗ trợ hiển thị thông tin và so sánh.</p>
+        </div>
+        <div class="code-block">
+            <div class="code-header"><span>Person.java</span><span class="file-badge">class</span></div>
+            <pre><code><span class="kw">class</span> <span class="tp">Person</span> {
+    <span class="tp">String</span> name;
+    <span class="tp">BloodType</span> bloodType;
+
+    <span class="kw">public</span> <span class="fn">Person</span>(<span class="tp">String</span> name, <span class="tp">BloodType</span> bloodType) {
+        <span class="kw">this</span>.name = name;
+        <span class="kw">this</span>.bloodType = bloodType;
+    }
+
+    <span class="kw">public</span> <span class="tp">String</span> <span class="fn">getName</span>() {
+        <span class="kw">return</span> name;
+    }
+
+    <span class="kw">public</span> <span class="tp">BloodType</span> <span class="fn">getBloodType</span>() {
+        <span class="kw">return</span> bloodType;
+    }
+
+    <span class="kw">public</span> <span class="tp">String</span> <span class="fn">toString</span>() {
+        <span class="kw">return</span> name + <span class="str">" ("</span> + bloodType + <span class="str">")"</span>;
+    }
+}</code></pre>
+        </div>
+        <div class="explanation">
+            <div class="label">&#128161; Giải thích code</div>
+            <p><strong><code>BloodType bloodType</code></strong> &mdash; thuộc tính kiểu <code>BloodType</code> (lớp cha), không phải kiểu cụ thể AType hay BType. Nhờ vậy Person có thể chứa bất kỳ nhóm máu nào &mdash; đây là <strong>đa hình (Polymorphism)</strong>.<br><br>
+            <strong><code>toString()</code></strong> &mdash; khi in Person, nó tự động gọi <code>bloodType.toString()</code> để hiển thị dạng "An (A+)".</p>
+        </div>
+        <div class="reason">
+            <div class="label">&#10067; Lý do thiết kế</div>
+            <p>Lớp Person tách biệt <strong>"ai"</strong> (tên) khỏi <strong>"nhóm máu gì"</strong> (BloodType). Đây là nguyên lý <strong>Composition</strong> &mdash; Person <em>có một</em> BloodType, thay vì <em>là một</em> BloodType. Điều này giúp mỗi lớp giữ trách nhiệm rõ ràng: Person quản lý thông tin cá nhân, BloodType quản lý logic y tế.</p>
+        </div>
+    </div>
+</div>
+
+<!-- STEP 6 -->
+<div class="step-card">
+    <div class="step-header">
+        <div class="step-number blue">6</div>
+        <div class="step-info">
+            <h3>Tạo phương thức createBloodType()</h3>
+            <p>Factory method chuyển chuỗi thành đối tượng BloodType</p>
+        </div>
+    </div>
+    <div class="step-body">
+        <div class="analysis">
+            <div class="label">&#128269; Phân tích đề</div>
+            <p>Người dùng nhập nhóm máu dạng chuỗi ("A+", "O-", "AB+"). Cần một phương thức <strong>chuyển đổi</strong> chuỗi này thành đối tượng tương ứng (AType, OType…). Đây chính là <strong>Factory Pattern</strong>.</p>
+        </div>
+        <div class="code-block">
+            <div class="code-header"><span>BloodTypeProgram.java &mdash; createBloodType()</span><span class="file-badge">static method</span></div>
+            <pre><code><span class="kw">public static</span> <span class="tp">BloodType</span> <span class="fn">createBloodType</span>(<span class="tp">String</span> fullType) {
+    <span class="tp">String</span> type;
+    <span class="tp">RhFactor</span> rh;
+
+    fullType = fullType.<span class="fn">trim</span>().<span class="fn">toUpperCase</span>();
+
+    <span class="kw">if</span> (fullType.<span class="fn">endsWith</span>(<span class="str">"+"</span>)) {
+        rh = <span class="tp">RhFactor</span>.<span class="str">POSITIVE</span>;
+        type = fullType.<span class="fn">substring</span>(<span class="num">0</span>, fullType.<span class="fn">length</span>() - <span class="num">1</span>);
+    } <span class="kw">else if</span> (fullType.<span class="fn">endsWith</span>(<span class="str">"-"</span>)) {
+        rh = <span class="tp">RhFactor</span>.<span class="str">NEGATIVE</span>;
+        type = fullType.<span class="fn">substring</span>(<span class="num">0</span>, fullType.<span class="fn">length</span>() - <span class="num">1</span>);
+    } <span class="kw">else</span> {
+        <span class="kw">throw new</span> <span class="tp">IllegalArgumentException</span>(
+            <span class="str">"Invalid format. Use types like A+, B-, AB+, O- etc."</span>);
+    }
+
+    <span class="kw">switch</span> (type) {
+        <span class="kw">case</span> <span class="str">"A"</span>:  <span class="kw">return new</span> <span class="tp">AType</span>(rh);
+        <span class="kw">case</span> <span class="str">"B"</span>:  <span class="kw">return new</span> <span class="tp">BType</span>(rh);
+        <span class="kw">case</span> <span class="str">"AB"</span>: <span class="kw">return new</span> <span class="tp">ABType</span>(rh);
+        <span class="kw">case</span> <span class="str">"O"</span>:  <span class="kw">return new</span> <span class="tp">OType</span>(rh);
+        <span class="kw">default</span>:
+            <span class="kw">throw new</span> <span class="tp">IllegalArgumentException</span>(<span class="str">"Unknown blood type: "</span> + type);
+    }
+}</code></pre>
+        </div>
+        <div class="explanation">
+            <div class="label">&#128161; Giải thích code</div>
+            <p><strong>Bước 1: Chuẩn hóa input</strong> &mdash; <code>trim()</code> xóa khoảng trắng thừa, <code>toUpperCase()</code> chuyển thành chữ hoa để xử lý đồng nhất ("a+" &rarr; "A+").<br><br>
+            <strong>Bước 2: Tách Rh</strong> &mdash; ký tự cuối cùng ("+" hoặc "-") xác định yếu tố Rh. Phần còn lại là kiểu ABO.<br><br>
+            <strong>Bước 3: Tạo đối tượng</strong> &mdash; dùng <code>switch</code> để khởi tạo đúng lớp con. Kiểu trả về là <code>BloodType</code> (lớp cha), nhưng đối tượng thực tế là AType, BType… &rarr; đa hình.<br><br>
+            <strong>Xử lý lỗi</strong> &mdash; nếu input không hợp lệ, ném <code>IllegalArgumentException</code> với thông báo rõ ràng.</p>
+        </div>
+        <div class="reason">
+            <div class="label">&#10067; Lý do thiết kế</div>
+            <p>Đây là <strong>Factory Method Pattern</strong>: tập trung logic tạo đối tượng vào một nơi duy nhất. Phần còn lại của chương trình không cần biết có bao nhiêu lớp con hay cách khởi tạo chúng &mdash; chỉ cần gọi <code>createBloodType("A+")</code>. Khi thêm nhóm máu mới, chỉ cần thêm một <code>case</code> ở đây.</p>
+        </div>
+    </div>
+</div>
+
+<!-- STEP 7 -->
+<div class="step-card">
+    <div class="step-header">
+        <div class="step-number green">7</div>
+        <div class="step-info">
+            <h3>Tạo phương thức isValidChild()</h3>
+            <p>Kiểm tra tính hợp lệ của nhóm máu con</p>
+        </div>
+    </div>
+    <div class="step-body">
+        <div class="analysis">
+            <div class="label">&#128269; Phân tích đề</div>
+            <p>Chức năng 1 yêu cầu kiểm tra nhóm máu con có hợp lệ không. Cần kiểm tra <strong>2 điều kiện</strong>: (1) Kiểu ABO của con nằm trong tập có thể; (2) Nếu cả cha mẹ đều Rh-, con phải Rh-.</p>
+        </div>
+        <div class="code-block">
+            <div class="code-header"><span>BloodTypeProgram.java &mdash; isValidChild()</span><span class="file-badge">static method</span></div>
+            <pre><code><span class="kw">public static boolean</span> <span class="fn">isValidChild</span>(
+        <span class="tp">BloodType</span> father, <span class="tp">BloodType</span> mother, <span class="tp">BloodType</span> child) {
+
+    <span class="tp">Set&lt;String&gt;</span> possible = father.<span class="fn">possibleChildren</span>(mother);
+
+    <span class="kw">return</span> possible.<span class="fn">contains</span>(child.<span class="fn">getType</span>()) &amp;&amp;
+           ((father.<span class="fn">getRh</span>() == <span class="tp">RhFactor</span>.<span class="str">NEGATIVE</span>
+             &amp;&amp; mother.<span class="fn">getRh</span>() == <span class="tp">RhFactor</span>.<span class="str">NEGATIVE</span>)
+                ? child.<span class="fn">getRh</span>() == <span class="tp">RhFactor</span>.<span class="str">NEGATIVE</span>
+                : <span class="kw">true</span>);
+}</code></pre>
+        </div>
+        <div class="explanation">
+            <div class="label">&#128161; Giải thích code</div>
+            <p><strong>Dòng 1:</strong> Gọi <code>father.possibleChildren(mother)</code> để lấy tập nhóm máu ABO mà con có thể có.<br><br>
+            <strong>Điều kiện 1:</strong> <code>possible.contains(child.getType())</code> &mdash; kiểu ABO của con phải nằm trong tập cho phép.<br><br>
+            <strong>Điều kiện 2 (ternary):</strong> Nếu cả cha và mẹ đều Rh- &rarr; con bắt buộc Rh-. Ngược lại (ít nhất 1 người Rh+) &rarr; con có thể Rh+ hoặc Rh-, nên trả về <code>true</code>.<br><br>
+            Cả 2 điều kiện được nối bằng <code>&amp;&amp;</code> &mdash; cả hai phải đúng.</p>
+        </div>
+        <div class="reason">
+            <div class="label">&#10067; Lý do thiết kế</div>
+            <p>Phương thức <code>static</code> vì nó không thuộc về bất kỳ đối tượng nào &mdash; nó là logic chung kiểm tra mối quan hệ giữa 3 đối tượng. Dùng ternary operator giúp gộp logic Rh thành 1 biểu thức gọn, tránh viết <code>if-else</code> dài dòng.</p>
+        </div>
+    </div>
+</div>
+
+<!-- STEP 8 -->
+<div class="step-card">
+    <div class="step-header">
+        <div class="step-number orange">8</div>
+        <div class="step-info">
+            <h3>Viết phương thức main()</h3>
+            <p>Kết nối tất cả lại &mdash; nhập liệu, xử lý, xuất kết quả</p>
+        </div>
+    </div>
+    <div class="step-body">
+        <div class="analysis">
+            <div class="label">&#128269; Phân tích đề</div>
+            <p>Chương trình main cần thực hiện 3 phần tuần tự: (a) Nhập danh sách người + nhóm máu; (b) Kiểm tra nhóm máu con; (c) Tìm người có thể truyền máu cho một người chỉ định.</p>
+        </div>
+        <div class="code-block">
+            <div class="code-header"><span>BloodTypeProgram.java &mdash; main()</span><span class="file-badge">Part a: Nhập danh sách</span></div>
+            <pre><code><span class="kw">public static void</span> <span class="fn">main</span>(<span class="tp">String</span>[] args) {
+    <span class="tp">Scanner</span> sc = <span class="kw">new</span> <span class="tp">Scanner</span>(<span class="tp">System</span>.in);
+    <span class="tp">List&lt;Person&gt;</span> people = <span class="kw">new</span> <span class="tp">ArrayList&lt;&gt;</span>();
+
+    <span class="cm">// Part a: Nhập danh sách người</span>
+    <span class="tp">System</span>.out.<span class="fn">print</span>(<span class="str">"Enter number of people: "</span>);
+    <span class="kw">int</span> n = sc.<span class="fn">nextInt</span>();
+    sc.<span class="fn">nextLine</span>();  <span class="cm">// Đọc bỏ ký tự xuống dòng</span>
+
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; n; i++) {
+        <span class="tp">System</span>.out.<span class="fn">print</span>(<span class="str">"Enter name: "</span>);
+        <span class="tp">String</span> name = sc.<span class="fn">nextLine</span>();
+        <span class="tp">System</span>.out.<span class="fn">print</span>(<span class="str">"Enter blood type (A+/A-/B+/AB-/...): "</span>);
+        <span class="tp">String</span> type = sc.<span class="fn">nextLine</span>();
+        people.<span class="fn">add</span>(<span class="kw">new</span> <span class="tp">Person</span>(name, <span class="fn">createBloodType</span>(type)));
+    }</code></pre>
+        </div>
+        <div class="explanation">
+            <div class="label">&#128161; Giải thích code &mdash; Part a</div>
+            <p><code>sc.nextLine()</code> sau <code>nextInt()</code> là bắt buộc &mdash; <code>nextInt()</code> chỉ đọc số, không đọc ký tự xuống dòng <code>\n</code>. Nếu không gọi <code>nextLine()</code> bổ sung, lần gọi <code>nextLine()</code> tiếp theo sẽ đọc chuỗi rỗng thay vì tên người.<br><br>
+            Mỗi lần lặp: đọc tên &rarr; đọc nhóm máu &rarr; dùng <code>createBloodType()</code> chuyển chuỗi thành đối tượng &rarr; tạo Person &rarr; thêm vào list.</p>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header"><span>BloodTypeProgram.java &mdash; main()</span><span class="file-badge">Part b: Kiểm tra con</span></div>
+            <pre><code>    <span class="cm">// Part b: Kiểm tra nhóm máu con</span>
+    <span class="tp">System</span>.out.<span class="fn">println</span>(<span class="str">"\n== Check Child Validity =="</span>);
+    <span class="tp">System</span>.out.<span class="fn">print</span>(<span class="str">"Father's blood type: "</span>);
+    <span class="tp">BloodType</span> father = <span class="fn">createBloodType</span>(sc.<span class="fn">nextLine</span>());
+    <span class="tp">System</span>.out.<span class="fn">print</span>(<span class="str">"Mother's blood type: "</span>);
+    <span class="tp">BloodType</span> mother = <span class="fn">createBloodType</span>(sc.<span class="fn">nextLine</span>());
+    <span class="tp">System</span>.out.<span class="fn">print</span>(<span class="str">"Child's blood type: "</span>);
+    <span class="tp">BloodType</span> child = <span class="fn">createBloodType</span>(sc.<span class="fn">nextLine</span>());
+
+    <span class="kw">boolean</span> valid = <span class="fn">isValidChild</span>(father, mother, child);
+    <span class="tp">System</span>.out.<span class="fn">println</span>(<span class="str">"Is child blood type valid? "</span> +
+                       (valid ? <span class="str">"Yes"</span> : <span class="str">"No"</span>));</code></pre>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header"><span>BloodTypeProgram.java &mdash; main()</span><span class="file-badge">Part c: Tìm donor</span></div>
+            <pre><code>    <span class="cm">// Part c: Tìm người truyền máu phù hợp</span>
+    <span class="tp">System</span>.out.<span class="fn">println</span>(<span class="str">"\n== Blood Donor Matching =="</span>);
+    <span class="tp">System</span>.out.<span class="fn">print</span>(<span class="str">"Enter person name to find donors: "</span>);
+    <span class="tp">String</span> targetName = sc.<span class="fn">nextLine</span>();
+    <span class="tp">Person</span> target = <span class="kw">null</span>;
+
+    <span class="kw">for</span> (<span class="tp">Person</span> p : people) {
+        <span class="kw">if</span> (p.<span class="fn">getName</span>().<span class="fn">equalsIgnoreCase</span>(targetName)) {
+            target = p;
+            <span class="kw">break</span>;
+        }
+    }
+
+    <span class="kw">if</span> (target == <span class="kw">null</span>) {
+        <span class="tp">System</span>.out.<span class="fn">println</span>(<span class="str">"Person not found."</span>);
+    } <span class="kw">else</span> {
+        <span class="tp">System</span>.out.<span class="fn">println</span>(<span class="str">"Compatible donors for "</span> + target.<span class="fn">getName</span>() + <span class="str">":"</span>);
+        <span class="kw">for</span> (<span class="tp">Person</span> donor : people) {
+            <span class="kw">if</span> (!donor.<span class="fn">equals</span>(target) &amp;&amp;
+                target.<span class="fn">getBloodType</span>().<span class="fn">canReceiveFrom</span>(donor.<span class="fn">getBloodType</span>())) {
+                <span class="tp">System</span>.out.<span class="fn">println</span>(<span class="str">"- "</span> + donor);
+            }
+        }
+    }
+}</code></pre>
+        </div>
+        <div class="explanation">
+            <div class="label">&#128161; Giải thích code &mdash; Part b &amp; c</div>
+            <p><strong>Part b:</strong> Nhập nhóm máu cha, mẹ, con &rarr; gọi <code>isValidChild()</code> &rarr; in "Yes" hoặc "No". Factory method <code>createBloodType()</code> xử lý việc chuyển chuỗi thành đối tượng.<br><br>
+            <strong>Part c &mdash; Tìm người nhận:</strong> Duyệt danh sách <code>people</code>, so sánh tên (không phân biệt hoa thường) bằng <code>equalsIgnoreCase()</code>.<br><br>
+            <strong>Tìm donor:</strong> Với mỗi người khác trong list, gọi <code>target.getBloodType().canReceiveFrom(donor.getBloodType())</code>. Đây là nơi <strong>đa hình phát huy</strong> &mdash; dù <code>getBloodType()</code> trả về kiểu <code>BloodType</code>, Java tự động gọi đúng phương thức <code>canReceiveFrom()</code> của lớp con cụ thể (AType, BType…).<br><br>
+            <strong><code>!donor.equals(target)</code></strong> &mdash; loại trừ chính người nhận ra khỏi danh sách donor.</p>
+        </div>
+        <div class="reason">
+            <div class="label">&#10067; Lý do thiết kế</div>
+            <p>Phương thức main không chứa bất kỳ logic y tế nào &mdash; nó chỉ làm 3 việc: nhập liệu, gọi phương thức, xuất kết quả. Toàn bộ logic nghiệp vụ nằm trong các class (BloodType, Person). Đây là nguyên lý <strong>Separation of Concerns</strong> &mdash; tách phần giao diện (I/O) khỏi phần xử lý (business logic), giúp dễ thay đổi giao diện (từ console sang GUI) mà không đụng đến logic.</p>
+        </div>
+    </div>
+</div>
+
+<!-- TỔNG KẾT -->
+<h2 class="section-title" style="margin-top:48px;">
+    <span class="icon" style="background:var(--orange-dim);color:var(--orange);">&#128208;</span>
+    Phần 4 &mdash; Tổng kết kiến thức OOP
+</h2>
+
+<div class="problem-box">
+    <h3>Các nguyên lý OOP được áp dụng trong bài</h3>
+    <table>
+        <thead><tr><th>Nguyên lý</th><th>Áp dụng ở đâu</th></tr></thead>
+        <tbody>
+            <tr><td><strong>Encapsulation</strong><br>(Đóng gói)</td><td>Person đóng gói name + bloodType; BloodType đóng gói rh + logic di truyền/truyền máu.</td></tr>
+            <tr><td><strong>Inheritance</strong><br>(Kế thừa)</td><td>AType, BType, ABType, OType kế thừa từ BloodType &mdash; chia sẻ code chung (toString, equals, getRh).</td></tr>
+            <tr><td><strong>Polymorphism</strong><br>(Đa hình)</td><td>Gọi <code>bloodType.canReceiveFrom()</code> mà không cần biết đó là nhóm nào &mdash; Java tự gọi đúng phiên bản.</td></tr>
+            <tr><td><strong>Composition</strong><br>(Hợp thành)</td><td>Person <em>chứa</em> BloodType &mdash; mối quan hệ "has-a".</td></tr>
+            <tr><td><strong>Factory Pattern</strong></td><td><code>createBloodType("A+")</code> &mdash; tập trung việc tạo đối tượng vào một nơi.</td></tr>
+            <tr><td><strong>Enum</strong></td><td>RhFactor &mdash; giới hạn giá trị hợp lệ, an toàn kiểu.</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- PHẦN 5 — QUY TRÌNH OOP TỔNG QUÁT -->
+<h2 class="section-title" style="margin-top:48px;">
+    <span class="icon" style="background:var(--surface-2);color:var(--cyan);border:1px solid var(--border);">&#127981;</span>
+    Phần 5 &mdash; Tổng quát các bước thực hiện một bài toán OOP bất kỳ
+</h2>
+
+<div class="problem-box">
+    <p style="font-size:0.92rem;color:var(--text-muted);line-height:1.75;margin:0 0 20px;">
+        Quy trình dưới đây áp dụng cho đa số đề OOP: từ <strong>đọc đề</strong> đến <strong>thiết kế lớp &amp; quan hệ</strong>, rồi <strong>main</strong> và <strong>thứ tự code</strong>. Bài nhóm máu trong tài liệu này minh họa trực tiếp các bước 2&ndash;6.
+    </p>
+
+    <div class="oop-flow">
+
+        <div class="oop-step">
+            <div class="oop-step-head">
+                <span class="oop-step-num">1</span>
+                <h3 class="oop-step-title">Đọc và phân tích đề bài</h3>
+            </div>
+            <div class="oop-step-body">
+                <div class="oop-subhead">Mục tiêu</div>
+                <ul class="oop-ul">
+                    <li>Hiểu bài toán yêu cầu gì.</li>
+                    <li>Xác định dữ liệu cần quản lý.</li>
+                    <li>Xác định hành động / chức năng cần thực hiện.</li>
+                </ul>
+                <div class="oop-subhead">Cần trả lời các câu hỏi</div>
+                <div class="oop-qa">
+                    <div class="oop-qa-item"><strong>1.</strong> Bài toán quản lý <strong>cái gì?</strong> &rarr; thường trở thành <strong>class</strong>.</div>
+                    <div class="oop-qa-item"><strong>2.</strong> Mỗi đối tượng có <strong>thông tin gì?</strong> &rarr; đó là <strong>attributes</strong> (thuộc tính).</div>
+                    <div class="oop-qa-item"><strong>3.</strong> Đối tượng có thể <strong>làm gì?</strong> &rarr; đó là <strong>methods</strong> (phương thức).</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="oop-step">
+            <div class="oop-step-head">
+                <span class="oop-step-num">2</span>
+                <h3 class="oop-step-title">Xác định các class</h3>
+            </div>
+            <div class="oop-step-body">
+                <div class="oop-rule"><strong>Quy tắc chung:</strong> danh từ (thực thể trong đề) &rarr; thường là <strong>class</strong>.</div>
+                <p>Gom các khái niệm trùng nghĩa, tránh tạo quá nhiều lớp trùng vai trò; có thể phác nhanh tên lớp trên giấy trước khi viết code.</p>
+            </div>
+        </div>
+
+        <div class="oop-step">
+            <div class="oop-step-head">
+                <span class="oop-step-num">3</span>
+                <h3 class="oop-step-title">Thiết kế thuộc tính (attributes)</h3>
+            </div>
+            <div class="oop-step-body">
+                <p><strong>Mỗi class cần lưu thông tin gì?</strong> Liệt kê theo từng lớp, gắn với kiểu dữ liệu phù hợp (<code>int</code>, <code>String</code>, kiểu tham chiếu tới lớp khác&hellip;).</p>
+                <div class="oop-subhead">Nguyên tắc (encapsulation)</div>
+                <ul class="oop-ul">
+                    <li>Thuộc tính thường để <strong><code>private</code></strong> &mdash; không cho truy cập trực tiếp từ bên ngoài.</li>
+                    <li>Mục đích: <strong>đóng gói</strong> (encapsulation), <strong>ẩn dữ liệu</strong> (data hiding), <strong>kiểm soát</strong> cách đọc/ghi giá trị.</li>
+                    <li>Chỉ <strong><code>public</code></strong> khi thật sự cần (ví dụ hằng số, API rõ ràng của thư viện).</li>
+                    <li>Thông thường truy cập qua <strong>getter</strong> / <strong>setter</strong> (có thể thêm kiểm tra hợp lệ trong setter).</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="oop-step">
+            <div class="oop-step-head">
+                <span class="oop-step-num">4</span>
+                <h3 class="oop-step-title">Thiết kế phương thức (methods)</h3>
+            </div>
+            <div class="oop-step-body">
+                <p>Xác định <strong>object có thể làm gì</strong> (hành vi nghiệp vụ, không trộn với nhập/xuất console nếu có thể tách).</p>
+                <div class="oop-subhead">Các loại method phổ biến</div>
+                <ul class="oop-ul">
+                    <li><strong>Constructor:</strong> khởi tạo đối tượng (gán giá trị ban đầu cho thuộc tính).</li>
+                    <li><strong>Getter / Setter:</strong> đọc và ghi thuộc tính có kiểm soát.</li>
+                    <li><strong>Input / Output:</strong> có thể nằm ở lớp điều khiển / <code>main</code>; phần cốt lõi nên là method nghiệp vụ thuần (dễ test).</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="oop-step">
+            <div class="oop-step-head">
+                <span class="oop-step-num">5</span>
+                <h3 class="oop-step-title">Xác định quan hệ giữa các class</h3>
+            </div>
+            <div class="oop-step-body">
+                <div class="oop-rel-grid">
+                    <div class="oop-rel-card">
+                        <div class="rel-name">Association (liên kết)</div>
+                        Một class <strong>biết</strong> hoặc <strong>sử dụng</strong> class khác (tham chiếu, gọi method)&mdash; mức độ gắn kết tùy bài.
+                    </div>
+                    <div class="oop-rel-card">
+                        <div class="rel-name">Aggregation / Composition (has-a)</div>
+                        Một object <strong>chứa</strong> object khác. <em>Composition</em>: vòng đời thường gắn chặt với object cha; <em>Aggregation</em>: bớt phụ thuộc hơn &mdash; có thể bổ sung sau khi nắm <code>has-a</code>.
+                    </div>
+                    <div class="oop-rel-card">
+                        <div class="rel-name">Inheritance (kế thừa)</div>
+                        Khi có quan hệ <strong>&ldquo;is-a&rdquo;</strong> (lớp con <em>là một</em> kiểu lớp cha). Dùng <code>extends</code> / <code>implements</code> cho phần chung &amp; phần riêng.
+                    </div>
+                    <div class="oop-rel-card">
+                        <div class="rel-name">Polymorphism (đa hình)</div>
+                        Nhiều đối tượng <strong>cùng kiểu tham chiếu</strong> (cha / interface) nhưng <strong>hành vi cụ thể khác nhau</strong> lúc chạy &mdash; thường đi cùng <strong>override</strong> / interface, là <em>cơ chế</em> hơn là một kiểu liên kết UML đơn giản như association.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="oop-step">
+            <div class="oop-step-head">
+                <span class="oop-step-num">6</span>
+                <h3 class="oop-step-title">Viết chương trình chính (<code>main</code>)</h3>
+            </div>
+            <div class="oop-step-body">
+                <p>Tạo đối tượng &rarr; gọi method &rarr; in kết quả. <code>main</code> nên gọn: nhập liệu, điều phối luồng, gọi xuống các lớp đã thiết kế.</p>
+                <div class="oop-main-hint">new &hellip; &nbsp;&rarr;&nbsp; gọi phương thức nghiệp vụ &nbsp;&rarr;&nbsp; hiển thị / trả kết quả</div>
+            </div>
+        </div>
+
+        <div class="oop-step">
+            <div class="oop-step-head">
+                <span class="oop-step-num">7</span>
+                <h3 class="oop-step-title">Thứ tự triển khai gợi ý (khi viết code)</h3>
+            </div>
+            <div class="oop-step-body">
+                <div class="oop-order">
+                    <strong>Kiểu phụ trợ</strong> (<code>enum</code>, hằng, lớp tiện ích) &rarr;
+                    <strong>lớp cha / interface</strong> &rarr;
+                    <strong>lớp con</strong> (override từng quy tắc) &rarr;
+                    <strong>lớp thành phần</strong> (composition) &rarr;
+                    <strong>factory / service tĩnh</strong> &rarr;
+                    cuối cùng <strong><code>main</code></strong> nối I/O.<br><br>
+                    Cách làm này giúp <strong>biên dịch từng lớp</strong> và <strong>dễ kiểm thử từng phần</strong>.
+                </div>
+            </div>
+        </div>
+
+        <!-- <div class="oop-verify">
+            <h4>Kiểm tra quy trình bạn viết đã chính xác chưa?</h4>
+            <p><strong>Nhìn chung: đúng hướng và đủ dùng cho bài OOP / lab.</strong> Thứ tự &ldquo;phân tích đề &rarr; class &rarr; thuộc tính &rarr; phương thức &rarr; quan hệ &rarr; main &rarr; thứ tự code&rdquo; là logic chuẩn, dễ áp dụng lặp lại.</p>
+            <p><strong>Gợi ý tinh chỉnh:</strong> (1) Bước 2 và 5 có thể <em>xen kẽ</em> khi vẽ UML nháp (vừa ghi tên lớp vừa ghi quan hệ). (2) <strong>Polymorphism</strong> trong UML thường thể hiện qua kế thừa / interface và lời gọi đa hình &mdash; không cần đối chiếu 1&ndash;1 với association. (3) Bước 7 nên coi là <em>hướng dẫn build</em>, có thể lệch một chút nếu đề bắt làm <code>main</code> trước để thử &mdash; miễn là logic nghiệp vụ không bị nhét hết vào <code>main</code>.</p>
+        </div> -->
+    </div>
+</div>
+
+<div class="note">
+    <strong>&#128161; Mẹo làm bài:</strong> Khi gặp bài OOP, hãy bắt đầu bằng cách xác định: (1) Có những đối tượng nào? (2) Chúng có điểm chung gì &rarr; tạo lớp cha. (3) Chúng khác nhau ở đâu &rarr; tạo lớp con override. (4) Đối tượng nào chứa đối tượng nào &rarr; composition. Cách tiếp cận top-down này giúp bạn thiết kế hệ thống class rõ ràng trước khi viết code.
+</div>
+
+</div>
+</body>
+</html>
