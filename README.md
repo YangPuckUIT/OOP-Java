@@ -1,10 +1,10 @@
 # Object-Oriented Programming (Java)
 
-Java Object-Oriented Programming course materials, including theoretical lessons and practical lab exercises with source code implementations.
+Java Object-Oriented Programming course materials, including theoretical lessons and practical lab exercises with Java source code implementations.
 
 ## Overview
 
-This repository contains materials and exercises from the Object-Oriented Programming course.
+This repository contains materials and exercises from the **Object-Oriented Programming (MSIS2433.Q22.CTTT)** course.
 
 The repository is divided into two main sections:
 
