@@ -1,15 +1,13 @@
 # Object-Oriented Programming (Java)
 
-Java Object-Oriented Programming course materials, including theoretical lessons and practical lab exercises with Java source code implementations.
+> Course Code: MSIS2433.Q22.CTTT, written in Java
 
 ## Overview
 
-This repository contains materials and exercises from the **Object-Oriented Programming (MSIS2433.Q22.CTTT)** course.
+The repository has two main parts:
 
-The repository is divided into two main sections:
-
-- **Theory**: Lecture slides and example Java programs demonstrating OOP concepts.
-- **Practice**: Lab exercises with reference documents and Java source code implementations.
+- **Theory**: Lecture slides and Java examples
+- **Practice**: Lab exercises and Java source code
 
 
 ## Technologies Used
@@ -69,9 +67,7 @@ object-oriented-programming-java/
 
 ### Theory
 
-Contains lecture slides and Java examples used to demonstrate OOP concepts.
-
-Examples include:
+Contains lecture slides:
 
 - Classes and Objects
 - Encapsulation
@@ -81,8 +77,6 @@ Examples include:
 - Interfaces
 
 ### Practice
-
-Contains practical lab exercises.
 
 Each lab includes:
 
@@ -116,6 +110,6 @@ GitHub: https://github.com/YangPuckUIT
 
 ## Note
 
-This repository was created for learning and academic practice purposes.
+This repository was created for learning and practice
 
-The source code and materials are shared as a reference for studying Object-Oriented Programming. Please understand the concepts instead of copying the solutions directly.
+The code and materials are shared as a reference for OOP study
