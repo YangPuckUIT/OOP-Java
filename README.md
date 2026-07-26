@@ -11,13 +11,6 @@ The repository is divided into two main sections:
 - **Theory**: Lecture slides and example Java programs demonstrating OOP concepts.
 - **Practice**: Lab exercises with reference documents and Java source code implementations.
 
-## What this repository covers:
-
-- Understanding Object-Oriented Programming concepts
-- Designing and implementing classes and objects
-- Applying encapsulation, inheritance, polymorphism, and abstraction
-- Working with abstract classes and interfaces
-- Practicing Java programming through lab assignments
 
 ## Technologies Used
 
@@ -28,7 +21,7 @@ The repository is divided into two main sections:
 
 ## Repository Structure
 ```
-OOP-Java/
+object-oriented-programming-java/
 │
 ├── Theory/
 │   ├── 01slide-Intro.pdf
